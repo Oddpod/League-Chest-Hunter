@@ -20,6 +20,7 @@ dependencies:
   http: ^0.12.1
   flutter_dotenv: ^2.1.0
   scoped_model: ^1.0.1
+  shared_preferences: ^0.5.7
   flutter:
     sdk: flutter
 

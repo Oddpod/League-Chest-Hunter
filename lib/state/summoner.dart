@@ -13,8 +13,12 @@ class SummonerModel extends Model {
 
   List<ChampMastery> get championsWithMastery => _championsWithMastery;
   List<ChampMastery> get excludedChamps => _excludedChamps;
-  List<ChampMastery> get champsWithChestsAvailable =>
-      _championsWithMastery.where((champ) => champ.chestAvailable).toList();
+  List<ChampMastery> get champsWithChestsAvailable => _championsWithMastery
+      .where((champ) => champ.chestAvailable == true)
+      .toList();
+  List<ChampMastery> get champsWithoutChestAvailable => _championsWithMastery
+      .where((champ) => champ.chestAvailable == false)
+      .toList();
 
   setChampsWithMastery(List<ChampMastery> champs) {
     _championsWithMastery = champs

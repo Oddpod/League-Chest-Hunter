@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:league_chest_hunter/helpers/champs.dart';
+import 'package:league_chest_hunter/state/summoner.dart';
 import 'package:league_chest_hunter/views/Home/Home.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 Future main() async {
   await DotEnv().load('.env');
@@ -25,7 +28,16 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: Home(),
+      home: FutureBuilder(
+          future: loadChampNameDict(context),
+          builder: (_, snapshot) {
+            if (snapshot.hasData) {
+              return ScopedModel<SummonerModel>(
+                  model: new SummonerModel(snapshot.data), child: Home());
+            } else {
+              return CircularProgressIndicator();
+            }
+          }),
     );
   }
 }
