@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:league_chest_hunter/api/request.dart';
-import 'package:league_chest_hunter/models/ChampMastery.dart';
+import 'package:league_chest_hunter/entities/ChampMastery.dart';
 
 var endpoint =
     '${RIOT_API_ROOT_LOL}champion-mastery/v4/champion-masteries/by-summoner';

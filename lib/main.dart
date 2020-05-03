@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:league_chest_hunter/views/AvailableChests.dart';
+import 'package:league_chest_hunter/views/Home/Home.dart';
 
 Future main() async {
   await DotEnv().load('.env');
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: AvailableChests(),
+      home: Home(),
     );
   }
 }
