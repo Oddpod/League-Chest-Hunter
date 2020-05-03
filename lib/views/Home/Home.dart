@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:league_chest_hunter/helpers/champs.dart';
 import 'package:league_chest_hunter/state/summoner.dart';
 import 'package:league_chest_hunter/views/Home/CompletedChests.dart';
 import 'package:scoped_model/scoped_model.dart';
