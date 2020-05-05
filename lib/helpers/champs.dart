@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
-Future<Map<int, String>> loadChampNameDict(context) async {
-  String data = await DefaultAssetBundle.of(context)
-      .loadString("assets/champion/championsById.json");
+Future<Map<int, String>> loadChampNameDict() async {
+  String data =
+      await rootBundle.loadString("assets/champion/championsById.json");
   Map<String, dynamic> jsonResult = json.decode(data);
   var champNameById = new Map<int, String>();
   // print(data);

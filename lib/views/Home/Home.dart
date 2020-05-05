@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:league_chest_hunter/state/summoner.dart';
+import 'package:league_chest_hunter/models/summoner.dart';
 import 'package:league_chest_hunter/views/Home/CompletedChests.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AvailableChests.dart';
@@ -62,6 +62,7 @@ class _HomePageState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final summoner = Provider.of<Summoner>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(tabTitles[_selectedIndex]),
@@ -97,18 +98,16 @@ class _HomePageState extends State<Home> {
         selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
-      floatingActionButton: new ScopedModelDescendant<SummonerModel>(
-        builder: (context, child, model) => FloatingActionButton(
-          onPressed: () {
-            if (_controller.text.trim().length > 0) {
-              model.fetchSummoner(_controller.text);
-              saveLastSummonerInput(_controller.text);
-            }
-          },
-          tooltip: 'Refresh',
-          child: Icon(Icons.refresh),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
-      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (_controller.text.trim().length > 0) {
+            summoner.fetchChamps(_controller.text);
+            saveLastSummonerInput(_controller.text);
+          }
+        },
+        tooltip: 'Refresh',
+        child: Icon(Icons.refresh),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
