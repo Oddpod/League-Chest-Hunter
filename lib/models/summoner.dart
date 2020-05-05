@@ -50,7 +50,7 @@ class Summoner with ChangeNotifier {
     setChamps(await getChampionsWithMastery(summonerId));
   }
 
-  void putChampsIntoExcluded(List<int> champIdsToExclude) {
+  void putChampsIntoExcluded(Set<int> champIdsToExclude) {
     champIdsToExclude.forEach((champToExcludeId) {
       _excludedChampIds.add(champToExcludeId);
     });

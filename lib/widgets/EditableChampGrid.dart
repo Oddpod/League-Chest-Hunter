@@ -16,11 +16,10 @@ class EditableChampGrid extends StatefulWidget {
 }
 
 class _EditTableChampGridState extends State<EditableChampGrid> {
-  bool isEditing = false;
-  List<int> _selectedChampIds = [];
+  bool get isEditing => _selectedChampIds.isNotEmpty;
+  Set<int> _selectedChampIds = new Set();
   void _enterEditMode(ChampMastery champ) {
     setState(() {
-      isEditing = true;
       _selectedChampIds.add(champ.id);
     });
   }
@@ -38,30 +37,52 @@ class _EditTableChampGridState extends State<EditableChampGrid> {
     });
   }
 
+  void exitEditMode() {
+    setState(() {
+      _selectedChampIds.clear();
+    });
+  }
+
+  void executeBatchAction() {
+    widget.batchAction(
+      _selectedChampIds,
+    );
+    setState(() {
+      _selectedChampIds.clear();
+    });
+  }
+
   bool notNull(Object o) => o != null;
   @override
   Widget build(BuildContext context) {
+    final widgets = <Widget>[
+      ChampGrid(
+        champList: widget.champList,
+        selectedChampIndices: _selectedChampIds,
+        onTap: (champ) => _onSelect(champ),
+        onLongPress: (champ) => _enterEditMode(champ),
+      ),
+    ];
+    if (isEditing) {
+      final stopEditingButton = FloatingActionButton(
+        onPressed: () => exitEditMode(),
+        tooltip: 'Exclude',
+        child: Icon(Icons.stop),
+      );
+      final removeSelectedButton = FloatingActionButton(
+        onPressed: () => executeBatchAction(),
+        tooltip: 'Exclude',
+        child: Icon(Icons.remove),
+      );
+      final editRow = Positioned(
+        left: 10.0,
+        bottom: 10.0,
+        child: Row(children: <Widget>[stopEditingButton, removeSelectedButton]),
+      );
+      widgets.add(editRow);
+    }
     return new Stack(
-      children: <Widget>[
-        ChampGrid(
-          champList: widget.champList,
-          selectedChampIndices: _selectedChampIds,
-          onTap: _onSelect,
-          onLongPress: _enterEditMode,
-        ),
-        isEditing
-            ? new Positioned(
-                left: 10.0,
-                child: FloatingActionButton(
-                  onPressed: () => widget.batchAction(
-                    _selectedChampIds,
-                  ),
-                  tooltip: 'Exclude',
-                  child: Icon(Icons.remove),
-                ),
-              )
-            : null
-      ].where(notNull).toList(),
+      children: widgets,
     );
   }
 }

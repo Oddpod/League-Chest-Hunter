@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:league_chest_hunter/entities/ChampMastery.dart';
 
 class ChampGrid extends StatelessWidget {
-  final List<int> selectedChampIndices;
+  final Set<int> selectedChampIndices;
   final Function onTap;
   final Function onLongPress;
   ChampGrid(
@@ -21,20 +21,24 @@ class ChampGrid extends StatelessWidget {
       shrinkWrap: true,
       children: List.generate(champList.length, (index) {
         var champMastery = champList[index];
-        print(onLongPress);
         var isSelected = selectedChampIndices != null
-            ? selectedChampIndices.contains(index)
+            ? selectedChampIndices.contains(champMastery.id)
             : false;
         return new GestureDetector(
-          onLongPress: () => (onLongPress != null ? onLongPress(champMastery) : {}),
+          onLongPress: () =>
+              (onLongPress != null ? onLongPress(champMastery) : {}),
           onTap: () => (onTap != null ? onTap(champMastery) : {}),
           child: Container(
-            padding: const EdgeInsets.all(3.0),
-            decoration: BoxDecoration(
-              border: Border.all(
-                  color: isSelected ? Colors.yellow : Colors.transparent,
-                  width: 1),
-            ),
+            padding: const EdgeInsets.all(2.0),
+            decoration: isSelected
+                ? BoxDecoration(
+                    border: Border.all(
+                      color: Colors.greenAccent,
+                      width: 8,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  )
+                : BoxDecoration(),
             child: Card(
               elevation: isSelected ? 30.0 : 10.0,
               child: new Container(
