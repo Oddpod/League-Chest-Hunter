@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:league_chest_hunter/state/summoner.dart';
-import 'package:league_chest_hunter/widgets/ChampGrid.dart';
+import 'package:league_chest_hunter/widgets/EditableChampGrid.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class AvailableChests extends StatefulWidget {
@@ -13,11 +13,18 @@ class AvailableChests extends StatefulWidget {
 }
 
 class _AvailableChestsState extends State<AvailableChests> {
+  void markAsUnowned(List<int> selectedIds, Function excludeChamps) {
+    excludeChamps(selectedIds);
+  }
+
   @override
   Widget build(BuildContext context) {
     return new ScopedModelDescendant<SummonerModel>(
-      builder: (context, child, model) =>
-          ChampGrid(champList: model.champsWithChestsAvailable),
+      builder: (context, child, model) => EditableChampGrid(
+        champList: model.champsWithChestsAvailable,
+        batchAction: (selectedIds) =>
+            markAsUnowned(selectedIds, model.putChampsIntoExcluded),
+      ),
     );
   }
 }

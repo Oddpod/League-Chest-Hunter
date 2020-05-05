@@ -8,11 +8,11 @@ class SummonerModel extends Model {
 
   List<ChampMastery> _championsWithMastery = [];
   Map<int, String> champNameDict = new Map();
-  List<ChampMastery> _excludedChamps = [];
+  Set<ChampMastery> _excludedChamps = new Set();
   Map<String, String> cachedSummoners = new Map();
 
   List<ChampMastery> get championsWithMastery => _championsWithMastery;
-  List<ChampMastery> get excludedChamps => _excludedChamps;
+  List<ChampMastery> get excludedChamps => _excludedChamps.toList();
   List<ChampMastery> get champsWithChestsAvailable => _championsWithMastery
       .where((champ) => champ.chestAvailable == true)
       .toList();
@@ -28,6 +28,15 @@ class SummonerModel extends Model {
       }).toList();
     _championsWithMastery.sort((a, b) => a.name.compareTo(b.name));
     notifyListeners();
+  }
+
+  putChampsIntoExcluded(List<int> champIds) {
+    champIds.forEach((champId) {
+      final excludedChamp =
+          _championsWithMastery.firstWhere((champ) => champ.id == champId);
+      excludedChamps.add(excludedChamp);
+      _championsWithMastery.removeWhere((champ) => champ.id == champId);
+    });
   }
 
   void fetchSummoner(name) async {

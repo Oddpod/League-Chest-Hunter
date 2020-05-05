@@ -74,7 +74,9 @@ class _HomePageState extends State<Home> {
             decoration: InputDecoration(labelText: 'Summoner name'),
           ),
         ),
-        _widgetOptions.elementAt(_selectedIndex),
+        Expanded(
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ),
       ]),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
