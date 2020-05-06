@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:league_chest_hunter/models/summoner.dart';
 import 'package:league_chest_hunter/views/Home/CompletedChests.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AvailableChests.dart';
 import 'ExcludedMasteryChamps.dart';
@@ -34,20 +33,6 @@ class _HomePageState extends State<Home> {
 
   TextEditingController _controller = TextEditingController();
 
-  void saveLastSummonerInput(summonerName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('lastSummonerInput', summonerName);
-  }
-
-  void loadLastSummonerInput() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String lastSummonerInput = prefs.getString('lastSummonerInput');
-    print(lastSummonerInput);
-    setState(() {
-      _controller.text = lastSummonerInput;
-    });
-  }
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -57,12 +42,12 @@ class _HomePageState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    new Future.delayed(Duration.zero, loadLastSummonerInput);
   }
 
   @override
   Widget build(BuildContext context) {
     final summoner = Provider.of<Summoner>(context);
+    _controller.text = summoner.name;
     return Scaffold(
       appBar: AppBar(
         title: Text(tabTitles[_selectedIndex]),
@@ -102,7 +87,6 @@ class _HomePageState extends State<Home> {
         onPressed: () {
           if (_controller.text.trim().length > 0) {
             summoner.fetchChamps(_controller.text);
-            saveLastSummonerInput(_controller.text);
           }
         },
         tooltip: 'Refresh',

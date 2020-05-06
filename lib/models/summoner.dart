@@ -4,9 +4,12 @@ import 'package:league_chest_hunter/api/summoner.dart';
 import 'package:league_chest_hunter/entities/ChampMastery.dart';
 import 'package:league_chest_hunter/helpers/champs.dart';
 import 'package:league_chest_hunter/helpers/sorting.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Summoner with ChangeNotifier {
   List<ChampMastery> _champsWithMastery = [];
+  String _currentSummonerName;
+  String get name => _currentSummonerName;
 
   bool hasChestAvailable(champ) =>
       champ.chestAvailable && !_excludedChampIds.contains(champ.id);
@@ -25,6 +28,12 @@ class Summoner with ChangeNotifier {
   Map<int, String> _champNameDict = new Map();
   Summoner() {
     loadChampNameDict().then((value) => _champNameDict = value);
+    loadSavedData();
+  }
+
+  void loadSavedData() async {
+    await loadSavedSummonerName();
+    loadExcludedChampIds();
   }
 
   void setChamps(List<ChampMastery> champs) {
@@ -39,7 +48,7 @@ class Summoner with ChangeNotifier {
     notifyListeners();
   }
 
-  void fetchChamps(summonerName) async {
+  void fetchChamps(String summonerName) async {
     String summonerId;
     if (_cachedSummoners.containsKey(summonerName)) {
       summonerId = _cachedSummoners[summonerName];
@@ -48,12 +57,53 @@ class Summoner with ChangeNotifier {
       _cachedSummoners[summonerName] = summonerId;
     }
     setChamps(await getChampionsWithMastery(summonerId));
+    if (summonerName != _currentSummonerName) {
+      await setLastSummonerName(summonerName);
+      loadExcludedChampIds();
+      return;
+    }
+    await setLastSummonerName(summonerName);
   }
 
   void putChampsIntoExcluded(Set<int> champIdsToExclude) {
     champIdsToExclude.forEach((champToExcludeId) {
       _excludedChampIds.add(champToExcludeId);
     });
+    saveExcludedChampsIds();
+    notifyListeners();
+  }
+
+  void saveExcludedChampsIds() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('savedExcludedChampsIds$_currentSummonerName',
+        _excludedChampIds.map((id) => id.toString()).toList());
+  }
+
+  Future<void> loadSavedSummonerName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final savedSummnerInput = prefs.getString('lastSummonerInput');
+    if (savedSummnerInput == null) {
+      return;
+    }
+    _currentSummonerName = savedSummnerInput;
+    notifyListeners();
+  }
+
+  Future<void> setLastSummonerName(summonerName) async {
+    _currentSummonerName = summonerName;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastSummonerInput', summonerName);
+  }
+
+  void loadExcludedChampIds() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final savedExcludedChampIds =
+        prefs.getStringList('savedExcludedChampsIds$_currentSummonerName');
+    if (savedExcludedChampIds == null) {
+      return;
+    }
+    _excludedChampIds =
+        savedExcludedChampIds.map((stringId) => int.parse(stringId)).toSet();
     notifyListeners();
   }
 }
