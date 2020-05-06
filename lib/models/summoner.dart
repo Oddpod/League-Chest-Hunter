@@ -106,4 +106,12 @@ class Summoner with ChangeNotifier {
         savedExcludedChampIds.map((stringId) => int.parse(stringId)).toSet();
     notifyListeners();
   }
+
+  void includeChamps(Set<int> idsToInclude) {
+    idsToInclude.forEach((champIdToInclude) {
+      _excludedChampIds.removeWhere(
+          (excludedChampId) => excludedChampId == champIdToInclude);
+    });
+    notifyListeners();
+  }
 }

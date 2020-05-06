@@ -28,7 +28,7 @@ class ChampGrid extends StatelessWidget {
           onLongPress: () =>
               (onLongPress != null ? onLongPress(champMastery) : {}),
           onTap: () => (onTap != null ? onTap(champMastery) : {}),
-          child: Container(
+          child: AnimatedContainer(
             padding: const EdgeInsets.all(2.0),
             decoration: isSelected
                 ? BoxDecoration(
@@ -39,6 +39,7 @@ class ChampGrid extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   )
                 : BoxDecoration(),
+            duration: Duration(milliseconds: 250),
             child: Card(
               elevation: isSelected ? 30.0 : 10.0,
               child: new Container(

@@ -6,10 +6,12 @@ import 'package:league_chest_hunter/entities/ChampMastery.dart';
 import 'ChampGrid.dart';
 
 class EditableChampGrid extends StatefulWidget {
-  EditableChampGrid({Key key, this.champList, @required this.batchAction})
+  EditableChampGrid(
+      {Key key, this.champList, @required this.batchAction, this.editIcon = Icons.remove})
       : super(key: key);
   final List<ChampMastery> champList;
   final Function batchAction;
+  final IconData editIcon;
 
   @override
   _EditTableChampGridState createState() => _EditTableChampGridState();
@@ -72,7 +74,7 @@ class _EditTableChampGridState extends State<EditableChampGrid> {
       final removeSelectedButton = FloatingActionButton(
         onPressed: () => executeBatchAction(),
         tooltip: 'Exclude',
-        child: Icon(Icons.remove),
+        child: Icon(widget.editIcon),
       );
       final editRow = Positioned(
         left: 10.0,
