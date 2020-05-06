@@ -16,7 +16,7 @@ Future<List<ChampMastery>> getChampionsWithMastery(summonerId) async {
           .map((dynamic model) => ChampMastery.fromJson(model))
           .toList();
     } else {
-      return [];
+      throw new Error();
     }
   } finally {
     client.close();

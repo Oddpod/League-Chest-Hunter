@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:league_chest_hunter/api/championMastery.dart';
 import 'package:league_chest_hunter/api/summoner.dart';
 import 'package:league_chest_hunter/entities/ChampMastery.dart';
 import 'package:league_chest_hunter/helpers/champs.dart';
+import 'package:league_chest_hunter/helpers/io.dart';
 import 'package:league_chest_hunter/helpers/sorting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,6 +36,7 @@ class Summoner with ChangeNotifier {
 
   void loadSavedData() async {
     await loadSavedSummonerName();
+    await loadSavedSummonerChamps();
     loadExcludedChampIds();
   }
 
@@ -42,9 +46,6 @@ class Summoner with ChangeNotifier {
     });
     champs.sort(alphabeticSort);
     _champsWithMastery = champs;
-    _champsWithMastery.forEach((element) {
-      print(element);
-    });
     notifyListeners();
   }
 
@@ -63,6 +64,7 @@ class Summoner with ChangeNotifier {
       return;
     }
     await setLastSummonerName(summonerName);
+    saveSummonerChamps();
   }
 
   void putChampsIntoExcluded(Set<int> champIdsToExclude) {
@@ -113,5 +115,21 @@ class Summoner with ChangeNotifier {
           (excludedChampId) => excludedChampId == champIdToInclude);
     });
     notifyListeners();
+  }
+
+  saveSummonerChamps() async {
+    await saveFile(_currentSummonerName, json.encode(_champsWithMastery));
+  }
+
+  loadSavedSummonerChamps() async {
+    String jsonSavedChamps = await readFile(_currentSummonerName);
+    if (jsonSavedChamps == null) {
+      return;
+    }
+    Iterable champsJson = json.decode(jsonSavedChamps);
+    List<ChampMastery> champs = champsJson
+        .map((dynamic champJson) => ChampMastery.fromJson(champJson))
+        .toList();
+    setChamps(champs);
   }
 }
