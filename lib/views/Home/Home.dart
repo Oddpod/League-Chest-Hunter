@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:league_chest_hunter/models/summoner.dart';
 import 'package:league_chest_hunter/views/Home/CompletedChests.dart';
+import 'package:league_chest_hunter/widgets/SummonerSelector.dart';
 import 'package:provider/provider.dart';
 
 import 'AvailableChests.dart';
@@ -17,7 +18,7 @@ class Home extends StatefulWidget {
 class Page {}
 
 class _HomePageState extends State<Home> {
-  Map<int, String> champNameDict = new Map();
+  TextEditingController _controller = TextEditingController();
   int _selectedIndex = 0;
   List<Widget> _widgetOptions = <Widget>[
     AvailableChests(title: "Available chests Overview"),
@@ -31,8 +32,7 @@ class _HomePageState extends State<Home> {
     'Completed Chests'
   ];
 
-  TextEditingController _controller = TextEditingController();
-
+  List<String> suggestions = [];
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -40,26 +40,19 @@ class _HomePageState extends State<Home> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final summoner = Provider.of<Summoner>(context);
     _controller.text = summoner.name;
+    suggestions = summoner.cachedSummonerNames;
     return Scaffold(
       appBar: AppBar(
         title: Text(tabTitles[_selectedIndex]),
       ),
       body: Column(children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: TextField(
+        SummonerSelector(
+            suggestions: suggestions,
             controller: _controller,
-            decoration: InputDecoration(labelText: 'Summoner name'),
-          ),
-        ),
+            onSelectionChanged: (name) => summoner.loadSavedSummoner(name)),
         Expanded(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),

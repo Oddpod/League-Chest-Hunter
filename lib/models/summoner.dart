@@ -28,6 +28,8 @@ class Summoner with ChangeNotifier {
   Set<int> _excludedChampIds = new Set();
   Map<String, String> _cachedSummoners = new Map();
 
+  List<String> get cachedSummonerNames => _cachedSummoners.keys.toList();
+
   Map<int, String> _champNameDict = new Map();
   Summoner() {
     loadChampNameDict().then((value) => _champNameDict = value);
@@ -36,6 +38,33 @@ class Summoner with ChangeNotifier {
 
   void loadSavedData() async {
     await loadSavedSummonerName();
+    await loadSavedSummonerChamps();
+    await loadCachedSummoners();
+    loadExcludedChampIds();
+  }
+
+  Future<void> loadCachedSummoners() async {
+    var jsonCached = await readFile('cachedSummoners.json');
+    if (jsonCached == null) {
+      return;
+    }
+    Map<String, String> savedSummoners = Map.castFrom(json.decode(jsonCached));
+    _cachedSummoners.clear();
+    _cachedSummoners.addAll(savedSummoners);
+    notifyListeners();
+  }
+
+  void saveCachedSummoners() {
+    var jsonCached = json.encode(_cachedSummoners);
+    saveFile('cachedSummoners.json', jsonCached);
+  }
+
+  void loadSavedSummoner(name) async {
+    if (!_cachedSummoners.containsKey(name)) {
+      fetchChamps(name);
+      return;
+    }
+    await setLastSummonerName(name);
     await loadSavedSummonerChamps();
     loadExcludedChampIds();
   }
@@ -56,6 +85,7 @@ class Summoner with ChangeNotifier {
     } else {
       summonerId = await getSummonerId(summonerName);
       _cachedSummoners[summonerName] = summonerId;
+      saveCachedSummoners();
     }
     setChamps(await getChampionsWithMastery(summonerId));
     if (summonerName != _currentSummonerName) {

@@ -43,6 +43,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.12"
+  combos:
+    dependency: "direct main"
+    description:
+      name: combos
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   convert:
     dependency: transitive
     description:
