@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:league_chest_hunter/api/championMastery.dart';
-import 'package:league_chest_hunter/api/summoner.dart';
 import 'package:league_chest_hunter/entities/ChampMastery.dart';
 import 'package:league_chest_hunter/helpers/champs.dart';
 import 'package:league_chest_hunter/helpers/io.dart';
@@ -82,12 +81,13 @@ class Summoner with ChangeNotifier {
     String summonerId;
     if (_cachedSummoners.containsKey(summonerName)) {
       summonerId = _cachedSummoners[summonerName];
-    } else {
-      summonerId = await getSummonerId(summonerName);
-      _cachedSummoners[summonerName] = summonerId;
+    }
+    ChampMasteryResponse champMastery = await getChampionsWithMastery(summonerName, summonerId: summonerId);
+    if(champMastery.summonerId != null){
+      _cachedSummoners[summonerName] = champMastery.summonerId;
       saveCachedSummoners();
     }
-    setChamps(await getChampionsWithMastery(summonerId));
+    setChamps(champMastery.championMastery);
     if (summonerName != _currentSummonerName) {
       await setLastSummonerName(summonerName);
       loadExcludedChampIds();

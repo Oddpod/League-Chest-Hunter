@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:league_chest_hunter/views/Home/Home.dart';
@@ -6,7 +7,11 @@ import 'package:provider/provider.dart';
 import 'models/summoner.dart';
 
 Future main() async {
-  await DotEnv().load('.env');
+  if(kReleaseMode){
+    await DotEnv().load('.env.production');
+  } else {
+    await DotEnv().load('.env');
+  }
   runApp(MyApp());
 }
 
