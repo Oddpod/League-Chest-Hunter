@@ -50,9 +50,9 @@ class _HomePageState extends State<Home> {
       ),
       body: Column(children: <Widget>[
         SummonerSelector(
-            suggestions: suggestions,
+            options: suggestions,
             controller: _controller,
-            onSelectionChanged: (name) => summoner.loadSavedSummoner(name)),
+            selectionChanged: (name) => summoner.loadSavedSummoner(name)),
         Expanded(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),

@@ -1,42 +1,43 @@
-import 'package:combos/combos.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:league_chest_hunter/widgets/DropdownMenu.dart';
 
-class SummonerSelector extends StatefulWidget {
+class SummonerSelector extends StatelessWidget {
   SummonerSelector(
-      {Key key, this.suggestions, this.controller, this.onSelectionChanged})
+      {Key key,
+      @required this.options,
+      @required this.controller,
+      @required this.selectionChanged})
       : super(key: key);
 
-  final List<String> suggestions;
   final TextEditingController controller;
-  final Function onSelectionChanged;
+  final List<String> options;
+  final Function selectionChanged;
 
-  @override
-  State<StatefulWidget> createState() => _SummonerSelectorState();
-}
-
-class _SummonerSelectorState extends State<SummonerSelector> {
   @override
   Widget build(BuildContext context) {
-    print(widget.suggestions);
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: TypeaheadCombo<String>(
-        selected: widget.controller.text,
-        getList: (text) async {
-          await Future.delayed(const Duration(milliseconds: 500));
-          return widget.suggestions;
-        },
-        onItemTapped: (item) => setState(() => widget.controller.text = item),
-        getItemText: (item) => item,
-        decoration: const InputDecoration(labelText: 'Summoner name'),
-        onSelectedChanged: (String value) {
-          widget.onSelectionChanged(value);
-        },
-        itemBuilder: (BuildContext context, ComboParameters parameters,
-            String item, bool selected, String text) {
-          return ListTile(title: Text(item ?? '<Empty>'));
-        },
+    return new Container(
+      child: Row(
+        children: <Widget>[
+          new Flexible(
+            child: Padding(
+              padding: EdgeInsets.all(3),
+              child: TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: 'Summoner name',
+                ),
+              ),
+            ),
+          ),
+          Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.all(4),
+            child: DropdownMenu(
+              onSelected: (selected) => selectionChanged(selected),
+              items: options,
+            ),
+          ),
+        ],
       ),
     );
   }
