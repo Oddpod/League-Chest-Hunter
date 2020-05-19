@@ -1,6 +1,6 @@
 # league_chest_hunter
 
-A new Flutter project.
+A simple flutter app for keeping track of available hextech chests from champ mastery.
 
 ## Getting Started
 
